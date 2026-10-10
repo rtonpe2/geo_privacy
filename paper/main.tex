@@ -16,7 +16,7 @@
 \maketitle
 
 \begin{abstract}
-This paper evaluates the geo-indistinguishability mechanism (Andr\'es et al., 2013) on NYC restaurant inspection data using PLUTO as auxiliary information for a Bayesian linkage attack. We assess loss of privacy and utility and test these against theoretical bounds set by the paper. This is done using single query attacks as well as multi-record attacks that exploit linked inspections. Results show that Bayesian priors improve re-identification by up to 43\% from na\"ive spatial proximity, and that record-level vulnerability is driven by noise displacement ($\rho = -0.92$) rather than record attributes. Also, the theoretical bounds for posterior-to-prior ratios and the composition bound for empirical privacy degradation are conservative by an order of magnitude.
+This paper evaluates the geo-indistinguishability mechanism (Andr\'es et al., 2013) on NYC restaurant inspection data using PLUTO as auxiliary information for a Bayesian linkage attack. We assess loss of privacy and utility and test these against theoretical bounds set by the paper. This is done using single query attacks as well as multi-record attacks that exploit linked inspections. Results show that the strongest Bayesian prior raises re-identification by 48\% relative to na\"ive spatial proximity at $\varepsilon = 0.01$ (up to 89\% at $\varepsilon = 0.002$), and that within a given setting, record-level vulnerability closely tracks noise displacement (Spearman $\rho$ between $-0.89$ and $-0.96$), although re-identification rates still differ by borough. % TODO: rho range is from an earlier session (eps <= 0.01); replace with posterior_summary.csv after the next full run. The theoretical bound on posterior-to-prior ratios holds for every record and sits more than two orders of magnitude above typical empirical ratios, and the $n\varepsilon$ composition bound overstates the empirical degradation from linked records.
 \end{abstract}
 
 \section{Introduction}
@@ -54,15 +54,15 @@ Section 3.3 of the paper addresses the case where the same location generates $n
 
 \subsection{Datasets}
 
-\textbf{NYC DOHMH Restaurant Inspection Results.} Inspection records for approximately 27,000 restaurants across five boroughs. Each record includes a unique restaurant identifier (CAMIS), inspection date, coordinates, borough, cuisine description, violation codes, critical flag, score, and grade. Multiple inspections of the same restaurant share the same CAMIS. Coordinates were projected from WGS84 to NYC State Plane (EPSG:2263, in feet) to ensure Euclidean distances are physically meaningful.
+\textbf{NYC DOHMH Restaurant Inspection Results.} Inspection records for restaurants across all five boroughs. Each record includes a unique restaurant identifier (CAMIS), inspection date, coordinates, borough, cuisine description, violation codes, critical flag, score, and grade. Multiple inspections of the same restaurant share the same CAMIS. Coordinates were projected from WGS84 to NYC State Plane (EPSG:2263, in feet) to ensure Euclidean distances are physically meaningful.
 
-\textbf{NYC PLUTO.} Tax lot records for approximately 857,000 lots across five boroughs, including BBL identifier, coordinates (State Plane), land use code, building class, residential units, floors, year built, building area, and borough. This serves as the attacker's auxiliary information.
+\textbf{NYC PLUTO.} Tax lot records for 857,103 lots across five boroughs, including BBL identifier, coordinates (State Plane), land use code, building class, residential units, floors, year built, building area, and borough. This serves as the attacker's auxiliary information.
 
 \subsection{Threat model and data split}
 
-Inspection data was released openly through 2024 with full BBL and address information. Starting in 2025, the publisher anonymizes by adding planar Laplace noise and stripping BBL. The attacker uses historical releases (training: 2020--2024, 21,431 visits, 14,965 restaurants) to learn priors and attacks the anonymized release (test: 2025--2026, 59,783 visits, 26,065 restaurants). The released test data includes noisy coordinates, CAMIS, inspection date, cuisine description, borough, critical flag, score, and grade. BBL is withheld as its inclusion would make reidentification trivial.
+Inspection data was released openly through 2024 with full BBL and address information. Starting in 2025, the publisher anonymizes by adding planar Laplace noise and stripping BBL. The attacker uses historical releases (training: 2020--2024, 44,321 visits, 21,637 restaurants, of which 43,237 visits join to PLUTO by BBL) to learn priors and attacks the anonymized release (test: inspections from January 2025 onward, 37,860 visits, 24,595 restaurants). The released test data includes noisy coordinates, CAMIS, inspection date, cuisine description, borough, critical flag, score, and grade. BBL is withheld as its inclusion would make reidentification trivial.
 
-We use PLUTO version 26v1 for both training and attack. Building stock turnover between versions is less than 0.1\% and we confirm that all test BBLs exist in PLUTO. BBL is used only during evaluation to verify correctness. It is never provided to the attack algorithm.
+We use PLUTO version 26v1 for both training and attack. Building stock turnover between versions is less than 0.1\%, and we keep only test records whose BBL appears in PLUTO (37,860 of 38,762 geocoded test visits). BBL is used only during evaluation to verify correctness. It is never provided to the attack algorithm.
 
 \subsection{Attack methodology}
 
@@ -80,7 +80,7 @@ We evaluate five configurations:
     \item \textbf{Borough}: restrict candidates to PLUTO buildings in the matching borough. Near-binary filter.
     \item \textbf{Cuisine $\to$ landuse}: weight candidates by $P(\text{landuse} \mid \text{cuisine type})$. Captures that Chinese restaurants concentrate in mixed-use buildings (landuse 4.0) while hamburger chains are in standalone commercial lots (landuse 5.0).
     \item \textbf{Cuisine $\to$ units}: weight candidates by $P(\text{units\_bin} \mid \text{cuisine type})$. Captures associations between restaurant types and building density.
-    \item \textbf{Cuisine $\to$ year}: weight candidates by $P(\text{year\_bin} \mid \text{cuisine type})$. Moderate signal (avg max probability 0.444).
+    \item \textbf{Cuisine $\to$ year}: weight candidates by $P(\text{year\_bin} \mid \text{cuisine type})$. Moderate signal. % TODO: "avg max probability 0.444" removed; not printed by the saved notebook run. Restore if recomputed.
 \end{itemize}
 
 Priors are learned by joining historical inspection records to PLUTO via BBL and computing conditional frequency tables. A smoothing value of 0.01 prevents zero probabilities. These reflect empirical associations, not causal relationships.
@@ -111,67 +111,69 @@ We test $\varepsilon$ values ranging from 0.001 to 0.05 ft$^{-1}$. Values above 
 
 \subsection{Single-query re-identification}
 
-Reidentification rates improve monotonically. Cuisine type is the strongest prior, but all priors provide only modest absolute improvement. At $\varepsilon = 0.01$, cuisine $\to$ landuse achieves 13.58\% re-identification compared to the 9.45\% spatial-only baseline, a 43.7\% relative improvement. At $\varepsilon = 0.05$, the gap narrows to 14.0\% relative lift (29.34\% vs 25.74\%). Borough provides virtually no improvement over spatial-only, confirming that geographic filtering is redundant with spatial proximity when the search radius is smaller than a borough.
+Re-identification rates rise monotonically with $\varepsilon$. Cuisine type paired with land use is the strongest prior, and even it provides only modest absolute improvement. The units and year-built priors perform at or below the spatial-only baseline at most $\varepsilon$ (for example, 8.37\% and 8.09\% vs 9.03\% at $\varepsilon = 0.01$). At $\varepsilon = 0.01$, cuisine $\to$ landuse achieves 13.37\% re-identification compared to the 9.03\% spatial-only baseline, a 48.0\% relative improvement. At $\varepsilon = 0.05$, the gap narrows to 15.0\% relative lift (29.50\% vs 25.65\%). Borough provides virtually no improvement over spatial-only, confirming that geographic filtering is redundant with spatial proximity when the search radius is smaller than a borough.
 
-The relative lift from priors is inversely related to $\varepsilon$: highest at 86.3\% ($\varepsilon = 0.002$) and declining steadily. When the spatial signal is weak (heavy noise), priors are most valuable. When noise is small and the spatial likelihood is already sharp, the prior adds marginal value.
+The relative lift from the cuisine $\to$ landuse prior peaks at 89.2\% ($\varepsilon = 0.002$) and declines steadily as $\varepsilon$ increases. It is lower at the noisiest setting (70.7\% at $\varepsilon = 0.001$), but across most of the range, priors are most valuable when the spatial signal is weak. When noise is small and the spatial likelihood is already sharp, the prior adds marginal value.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig_single_query.png}
-    \caption{Single-query re-identification rate vs $\varepsilon$ for all prior configurations.}
+    \includegraphics[width=0.8\textwidth]{fig_single_query.pdf}
+    \caption{Single-query re-identification rate vs $\varepsilon$ by prior configuration ($n = 37{,}860$ test visits). Borough-only is omitted because it is within 0.02 percentage points of spatial-only at every $\varepsilon$.}
     \label{fig:single_query}
 \end{figure}
 
 \subsection{Posterior analysis}
 
-The theoretical bound from Theorem 3.1 is satisfied in 100\% of tested records and is conservative by approximately an order of magnitude. Median empirical posterior-to-prior ratios range from 2.3 to 3.8 across configurations, while the theoretical bounds for corresponding candidate set diameters are 100--1000x larger. Median attacker confidence at the true building $P(\text{true} \mid z)$ is 0.03\% at $\varepsilon = 0.001$ and 1.9\% at $\varepsilon = 0.01$. Fewer than 2\% of records have $P(\text{true} \mid z) > 0.5$ even at the weakest privacy setting. This means that the attacker's beliefs change very little after the supplementary data.
+The theoretical bound from Theorem 3.1 is satisfied in 100\% of tested records, and it is far from tight. Median empirical posterior-to-prior ratios range from 1.1 to 3.8 across configurations and $\varepsilon$ (2.4 to 3.8 for $\varepsilon \le 0.01$), and the largest ratio observed for any record is 290 (cuisine $\to$ year, $\varepsilon = 0.001$). For comparison, the search radius $r$ satisfies $\varepsilon r \approx 6.64$ at every $\varepsilon$, so a record's bound $e^{\varepsilon D}$, where $D$ is the distance from the true building to the farthest candidate, is about $e^{6.64} \approx 760$ or more whenever $D \ge r$, which holds when candidates fill the search disc. The bound therefore sits more than two orders of magnitude above typical empirical ratios. Median attacker confidence at the true building $P(\text{true} \mid z)$ is 0.03\% at $\varepsilon = 0.001$ and about 2\% at $\varepsilon = 0.01$ (spatial only). At $\varepsilon \le 0.005$, fewer than 0.4\% of records have $P(\text{true} \mid z) > 0.5$ under any configuration. This rises to 0.5--2.0\% at $\varepsilon = 0.01$ and to 20--28\% at $\varepsilon = 0.05$, the weakest privacy setting tested. At $\varepsilon \le 0.01$, then, the attacker's confidence in the true building stays low in absolute terms, even though median posterior-to-prior ratios of 2.4 to 3.8 mean that confidence roughly triples.
 
-The strongest predictor of record-level vulnerability is the magnitude of the noise draw. Across all 200 combinations of attack configuration, $\varepsilon$, and cuisine type tested, the Spearman correlation between noise displacement and posterior-to-prior ratio ranges from $-0.89$ to $-0.96$ (all $p \approx 0$). Candidate count, borough, and cuisine type show no significant correlation. Privacy risk is fundamentally stochastic and is caused by a small fraction of records receiving insufficient noise by chance. These are the records an attacker can re-identify regardless of context.
+Within a given setting, the strongest predictor of record-level vulnerability is the magnitude of the noise draw. Across the 20 combinations of attack configuration and $\varepsilon \le 0.01$, the Spearman correlation between noise displacement and posterior-to-prior ratio ranges from $-0.89$ to $-0.96$ ($p < 0.001$ in every case). % TODO: these rho values come from an earlier session that ran only eps <= 0.01; the notebook's new export cell recomputes them for all six eps in the same run as every other number.
+Much of the record-to-record variation in risk is therefore stochastic, driven by a small fraction of records receiving little noise by chance. These are the records an attacker can re-identify regardless of context. Risk is not uniform across places, however: re-identification rates differ by borough under the same $\varepsilon$ (Section~\ref{sec:discussion}). % TODO: removed "Candidate count, borough, and cuisine type show no significant correlation" (not computed in the saved run; borough rates in the notebook contradict it).
 
 \subsection{Multi-record attack}
 
-Releasing a linkable identifier (CAMIS) measurably degrades privacy, but the degradation is less severe than the theoretical $n \cdot \varepsilon$ bound predicts. For spatial-only at $\varepsilon = 0.01$: $n = 1$ gives 9.45\%, $n = 2$ gives 11.5\%, $n = 3$ gives 15.2\%, $n = 4$ gives 15.8\%. With cuisine $\to$ landuse: $n = 1$ gives 13.6\%, $n = 3$ gives 20.0\%. The gains plateau around $n = 3$--$4$.
+Releasing a linkable identifier (CAMIS) measurably degrades privacy, but the degradation is less severe than the theoretical $n \cdot \varepsilon$ bound predicts. For spatial-only at $\varepsilon = 0.01$: $n = 1$ gives 9.0\%, $n = 2$ gives 11.2\%, $n = 3$ gives 13.9\%, $n = 4$ gives 14.2\%. With cuisine $\to$ landuse: $n = 1$ gives 13.4\%, $n = 3$ gives 18.7\%. The gains plateau around $n = 3$--$4$, although few restaurants have more than four inspections, so estimates beyond that are imprecise (Figure~\ref{fig:multi_record}).
 
-To test the composition bound, we compare multi-record re-identification to single-query at equivalent effective $\varepsilon$. For spatial-only: $n = 2$ at $\varepsilon = 0.005$ (effective $\varepsilon = 0.01$) achieves 4.7\%, compared to 9.45\% for a single query at $\varepsilon = 0.01$. The multi-record attack achieves substantially less than the theoretical worst case. The intersection constraint, which requires candidates to be spatially consistent across all observations, provides additional protection the bound does not account for.
+To test the composition bound, we compare multi-record re-identification to single-query at equivalent effective $\varepsilon$. For spatial-only: $n = 2$ at $\varepsilon = 0.005$ (effective $\varepsilon = 0.01$) achieves 4.9\%, compared to 9.0\% for a single query at $\varepsilon = 0.01$. The multi-record attack achieves substantially less than the theoretical worst case. The intersection constraint, which requires candidates to be spatially consistent across all observations, provides additional protection the bound does not account for.
 
-The practical policy implication: at $\varepsilon = 0.01$, releasing CAMIS costs approximately 6 percentage points of additional re-identification risk (from 13.6\% to 20.0\% with 3 linked observations under the strongest prior). A data publisher can weigh this cost against the analytical benefit of tracking inspection histories.
+The practical policy implication: at $\varepsilon = 0.01$, releasing CAMIS costs up to about 5 percentage points of additional re-identification risk under the strongest prior: 13.4\% for single observations, 15.9\% for restaurants with two linked inspections (the most common case), and 18.7\% for restaurants with three. A data publisher can weigh this cost against the analytical benefit of tracking inspection histories.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.55\textwidth]{fig_multi_record.png}
-    \caption{Multi-record attack: re-identification rate vs number of observations.}
+    \includegraphics[width=0.7\textwidth]{fig_multi_record.pdf}
+    \caption{Multi-record attack at $\varepsilon = 0.01$: re-identification rate by number of linked inspections. $n = 1$ is the single-query attack on all test visits; $n \ge 2$ covers restaurants with exactly $n$ inspections (counts in parentheses), with $n = 5$--$8$ pooled (the 8 restaurants with more than eight inspections are excluded). Error bars are 95\% Wilson intervals across records for a single noise draw.}
     \label{fig:multi_record}
 \end{figure}
 
 \subsection{Utility loss}
 
-The mechanism introduces substantial analytical distortion at privacy levels where re-identification risk remains moderate. At $\varepsilon = 0.01$, cuisine composition TVD is 0.33 (a third of each tract's cuisine distribution changes) and inspection score RMSE is 8.08 points. At $\varepsilon = 0.001$, TVD rises to 0.60 and RMSE to 11.25. Data publishers face a quantifiable tradeoff: at $\varepsilon = 0.01$, the mechanism protects 86\% of restaurants against the strongest attack while introducing mean cuisine distortion of 0.33 TVD per tract.
+The mechanism introduces substantial analytical distortion at privacy levels where re-identification risk remains moderate. At $\varepsilon = 0.01$, mean cuisine composition TVD is 0.34 (median 0.30; roughly a third of each tract's cuisine distribution changes) and inspection score RMSE is 8.09 points. At $\varepsilon = 0.001$, mean TVD rises to 0.59 and RMSE to 11.11. Data publishers face a quantifiable tradeoff: at $\varepsilon = 0.01$, 87\% of test records are not re-identified by the strongest attack, while mean cuisine distortion is 0.34 TVD per tract.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig_utility.png}
-    \caption{Utility loss vs $\varepsilon$. Left: inspection score distortion (RMSE/MAE). Right: cuisine composition distortion (TVD).}
+    \includegraphics[width=\textwidth]{fig_utility.pdf}
+    \caption{Utility loss vs $\varepsilon$, computed over 2020 Census tracts. Left: error in tract mean inspection score (RMSE and MAE). Right: total variation distance between true and noisy tract cuisine distributions (mean and median across tracts).}
     \label{fig:utility}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig_tradeoff.png}
-    \caption{Privacy-utility tradeoff. Re-identification rate plotted against utility distortion for spatial-only and cuisine $\to$ landuse priors.}
+    \includegraphics[width=\textwidth]{fig_tradeoff.pdf}
+    \caption{Privacy-utility tradeoff. Re-identification rate against utility distortion for the spatial-only and cuisine $\to$ landuse attacks; each point is one $\varepsilon$ (labeled on the cuisine $\to$ landuse series).}
     \label{fig:tradeoff}
 \end{figure}
 
-\section{Discussion}
+\section{Discussion}\label{sec:discussion}
 
 The key insight is that the mechanism's effectiveness depends less on the attacker's auxiliary information and more on the stochastic noise draw, which the mechanism's design already accounts for. Each of our three metrics supports this from a different angle.
 
-Re-identification rates show that even the strongest prior (cuisine $\to$ landuse) yields at most 4.7 percentage points of absolute improvement over spatial-only matching. The relative value of priors diminishes as $\varepsilon$ increases, from 86\% lift at $\varepsilon = 0.002$ to 14\% at $\varepsilon = 0.05$. This indicates that spatial proximity, not auxiliary knowledge, is the primary driver of attack success.
+Re-identification rates show that even the strongest prior (cuisine $\to$ landuse) yields at most 4.9 percentage points of absolute improvement over spatial-only matching. The relative value of priors diminishes as $\varepsilon$ increases, from 89\% lift at $\varepsilon = 0.002$ to 15\% at $\varepsilon = 0.05$. This indicates that spatial proximity, not auxiliary knowledge, is the primary driver of attack success.
 
-The posterior analysis confirms that the theoretical bound from Theorem 3.1 is conservative by an order of magnitude across all tested records. The near-perfect correlation between noise displacement and posterior-to-prior ratio ($\rho = -0.92$) means that vulnerability is determined by the random noise draw, not by which restaurant or which prior is used. This is reassuring for data publishers: no systematic class of records is disproportionately exposed.
+The posterior analysis confirms that the theoretical bound from Theorem 3.1 holds for every tested record and sits more than two orders of magnitude above typical empirical ratios. The strong correlation between noise displacement and posterior-to-prior ratio (Spearman $\rho$ of $-0.89$ to $-0.96$) % TODO: rho from earlier session; update after next full run.\n means that, within a setting, much of a record's vulnerability is determined by the random noise draw rather than by which prior is used. This does not make risk uniform across places. Under the same $\varepsilon$, re-identification rates differ by borough: at $\varepsilon = 0.01$ with the cuisine $\to$ landuse prior, 18.7\% of Bronx records and 19.1\% of Staten Island records are re-identified, against 12.5\% in Brooklyn and 11.6\% in Manhattan.
+% TODO: Discussion rho range is from an earlier session (eps <= 0.01); update after next full run.
 
 The multi-record attack shows that the composition bound $n \cdot \varepsilon$ similarly overestimates empirical degradation. The spatial intersection constraint provides protection the worst-case theory does not capture, and gains plateau after 3--4 observations.
 
-At the same time, utility loss is substantial. Even at $\varepsilon = 0.01$, cuisine composition distortion (TVD = 0.33) would meaningfully affect tract-level food access analyses. Publishers should select $\varepsilon$ based on the specific downstream analyses they need to preserve, using the privacy-utility curves this methodology produces.
+At the same time, utility loss is substantial. Even at $\varepsilon = 0.01$, cuisine composition distortion (mean TVD = 0.34) would meaningfully affect tract-level food access analyses. Publishers should select $\varepsilon$ based on the specific downstream analyses they need to preserve, using the privacy-utility curves this methodology produces.
 
 The utility metric is the most customizable and will heavily influence the optimal epsilon value for a given dataset.
 
