@@ -5,6 +5,5 @@ __pycache__/
 *.csv
 *.json
 
-# keep the small result tables the paper is built from
 !results/
 !results/*.csv

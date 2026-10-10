@@ -1,13 +1,3 @@
-"""One-off: recover the result tables printed by the saved notebook run into CSVs.
-
-The paper's numbers were drifting from the notebook because they came from
-different runs. This script reads the stdout already saved in
-geo-privacy-restaurant.ipynb (cells executed in one session, execution counts
-11-32) and writes results/*.csv. Going forward, the notebook's final cell writes
-these CSVs directly; this script is only needed to recover the existing run.
-
-Usage: python scripts/extract_notebook_results.py geo-privacy-restaurant.ipynb results/
-"""
 import json
 import re
 import sys
@@ -25,7 +15,6 @@ def cell_text(nb, idx):
 
 
 def rows_after(text, start_marker, n_rows, skip=0):
-    """Return n_rows whitespace-split lines that start with a number, after start_marker."""
     pos = text.index(start_marker)
     out = []
     for line in text[pos:].splitlines()[1:]:
@@ -42,11 +31,10 @@ def main(nb_path, out_dir):
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
 
-    # 1. Single-query re-identification (cell 13, final pivot; columns alphabetical)
     t = cell_text(nb, 13)
     t = t[t.index("=== SINGLE-QUERY RESULTS ==="):]
-    first = rows_after(t, "=== SINGLE-QUERY", 6)          # borough, cuisine_landuse, units, year
-    second = rows_after(t, "spatial_only", 6)             # spatial_only block
+    first = rows_after(t, "=== SINGLE-QUERY", 6)
+    second = rows_after(t, "spatial_only", 6)
     rows = []
     for a, b in zip(first, second):
         eps = float(a[0])
@@ -57,7 +45,6 @@ def main(nb_path, out_dir):
     single = pd.DataFrame(rows)
     single.to_csv(out / "single_query.csv", index=False)
 
-    # 2. Multi-record re-identification (cell 16)
     t = cell_text(nb, 16)
     rows = []
     for cfg in CONFIGS:
@@ -66,13 +53,11 @@ def main(nb_path, out_dir):
             for eps, v in zip(EPS, tok[1:7]):
                 rows.append({"epsilon": eps, "n_obs": n, "config": cfg, "reid_rate": float(v)})
     multi = pd.DataFrame(rows)
-    # restaurants per n (cell 15 distribution)
     t15 = cell_text(nb, 15)
     counts = {int(a): int(b) for a, b in rows_after(t15, "n_inspections", 9)}
     multi["n_restaurants"] = multi["n_obs"].map(counts)
     multi.to_csv(out / "multi_record.csv", index=False)
 
-    # 3. Utility (cells 19, 20)
     score = [re.findall(r"eps=([\d.]+): score RMSE=([\d.]+), MAE=([\d.]+)", cell_text(nb, 19))][0]
     pd.DataFrame([(float(e), float(r), float(m)) for e, r, m in score],
                  columns=["epsilon", "rmse", "mae"]).to_csv(out / "utility_score.csv", index=False)
@@ -80,7 +65,6 @@ def main(nb_path, out_dir):
     pd.DataFrame([(float(e), float(a), float(b)) for e, a, b in cuis],
                  columns=["epsilon", "tvd_mean", "tvd_median"]).to_csv(out / "utility_cuisine.csv", index=False)
 
-    # 4. Posterior summary (cell 25)
     t = cell_text(nb, 25)
     t = t[t.index("=== POSTERIOR SUMMARY ==="):]
     rows = []
@@ -93,7 +77,6 @@ def main(nb_path, out_dir):
                          "bound_satisfied_pct": float(tok[6].rstrip("%"))})
     pd.DataFrame(rows).to_csv(out / "posterior_summary.csv", index=False)
 
-    # 5. Borough-stratified re-identification (cell 22)
     t = cell_text(nb, 22)
     rows = []
     for cfg in ["spatial_only", "cuisine_landuse"]:
@@ -102,20 +85,16 @@ def main(nb_path, out_dir):
                 rows.append({"config": cfg, "epsilon": float(tok[0]), "borough": b, "reid_rate": float(v)})
     pd.DataFrame(rows).to_csv(out / "borough.csv", index=False)
 
-    # 6. Candidate density at eps=0.01 (cell 23)
     dens = re.findall(r"(\w[\w ]*?)\s*: avg candidates = (\d+), median = (\d+)", cell_text(nb, 23))
     pd.DataFrame([(b.strip(), int(a), int(m)) for b, a, m in dens],
                  columns=["borough", "mean_candidates", "median_candidates"]).to_csv(out / "candidate_density.csv", index=False)
 
-    # 7. Prior lift, computed in the notebook from unrounded rates (cell 33)
     lift = re.findall(r"^\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)%", cell_text(nb, 33), re.M)
     pd.DataFrame([tuple(map(float, r)) for r in lift],
                  columns=["epsilon", "spatial_only", "cuisine_landuse", "abs_lift", "rel_lift_pct"]
                  ).to_csv(out / "prior_lift.csv", index=False)
 
-    # 8. Data summary (cells 5, 6, 9)
     t6 = cell_text(nb, 6)
-    # last occurrence = after filtering test records to BBLs present in PLUTO
     tr = list(re.finditer(r"\nTraining: (\d+) visits, (\d+) restaurants", t6))[-1]
     te = list(re.finditer(r"\nTest: (\d+) visits, (\d+) restaurants", t6))[-1]
     summary = {

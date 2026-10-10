@@ -1,8 +1,3 @@
-"""Build every paper figure from results/*.csv so figures and text share one run.
-
-Usage: python scripts/make_figures.py results/ paper/
-Writes vector PDFs (used by main.tex) plus PNG previews.
-"""
 import sys
 from pathlib import Path
 
@@ -10,8 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Categorical slots validated for CVD separation; low-contrast slots get direct
-# labels + distinct markers so identity never depends on color alone.
 SERIES = {
     "spatial_only":    dict(label="Spatial only",       color="#2a78d6", marker="o"),
     "cuisine_landuse": dict(label="Cuisine → land use", color="#eb6834", marker="s"),
@@ -21,7 +14,7 @@ SERIES = {
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 plt.rcParams.update({
-    "font.family": "DejaVu Sans",  # bundled with matplotlib, so output matches on any machine
+    "font.family": "DejaVu Sans",
     "font.size": 9, "axes.titlesize": 9.5, "axes.labelsize": 9,
     "xtick.labelsize": 8, "ytick.labelsize": 8, "legend.fontsize": 8,
     "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED, "ytick.color": MUTED,
@@ -60,7 +53,6 @@ def fig_single_query(res, out):
     for cfg, st in SERIES.items():
         s = df[df.config == cfg].sort_values("epsilon")
         ax.plot(s.epsilon, s.reid_rate * 100, color=st["color"], marker=st["marker"], label=st["label"])
-    # Direct labels: the land-use line separates; the other three overlap, so one label covers them.
     last = df[df.epsilon == df.epsilon.max()].set_index("config").reid_rate * 100
     ax.annotate("Cuisine → land use", (0.05, last["cuisine_landuse"]), xytext=(7, 0),
                 textcoords="offset points", fontsize=7.5, color=INK, va="center")
