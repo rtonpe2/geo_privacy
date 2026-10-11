@@ -13,16 +13,16 @@ conda activate geo-privacy
 
 Downloaded automatically via NYC Open Data API:
 - [DOHMH Restaurant Inspections](https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j)
-- [PLUTO](https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks) — download CSV manually and set `PLUTO_PATH` in the notebook
+- [PLUTO](https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks) — download CSV manually and set `PLUTO_PATH` in the notebook's config cell (version 26v2 used)
 
 ## Key Findings
 
-All numbers come from one notebook run, saved in `results/*.csv`, except the Spearman ρ range, which comes from an earlier session (ε ≤ 0.01) and will be replaced on the next full run.
+All numbers come from one notebook run, saved in `results/*.csv`.
 
-- The strongest prior (cuisine → land use) raises re-identification by 48% relative to nearest-building matching at ε = 0.01 (13.4% vs 9.0%), and by up to 89% at ε = 0.002
-- The posterior-to-prior bound (Theorem 3.1) holds for 100% of records and sits more than two orders of magnitude above median empirical ratios (1.1 to 3.8)
-- Within a setting, record-level vulnerability tracks noise displacement (Spearman ρ −0.89 to −0.96), but rates differ by borough under the same ε
-- Multi-record attacks improve re-identification with diminishing returns (9.0% → 14.2% from 1 to 4 linked inspections at ε = 0.01); the composition bound n·ε overstates empirical degradation
+- The strongest prior (cuisine → land use) raises re-identification by 44% relative to nearest-building matching at ε = 0.01 (13.7% vs 9.5%), and by up to 86% at ε = 0.002
+- The posterior-to-prior bound (Theorem 3.1) holds for 100% of records and sits about three orders of magnitude above the empirical ratios (medians 1.1 to 3.8)
+- Within a setting, record-level vulnerability tracks noise displacement (Spearman ρ −0.75 to −0.96), but rates differ by borough under the same ε
+- Multi-record attacks improve re-identification (9.5% for a single observation, 15.4% with three linked inspections at ε = 0.01); the composition bound n·ε overstates empirical degradation
 
 ## Reproducing the paper's numbers and figures
 

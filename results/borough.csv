@@ -1,61 +1,151 @@
 config,epsilon,borough,reid_rate
-spatial_only,0.001,Bronx,0.0064
-spatial_only,0.001,Brooklyn,0.0032
-spatial_only,0.001,Manhattan,0.0044
-spatial_only,0.001,Queens,0.0057
-spatial_only,0.001,Staten Island,0.0098
-spatial_only,0.002,Bronx,0.0176
-spatial_only,0.002,Brooklyn,0.0072
-spatial_only,0.002,Manhattan,0.0104
-spatial_only,0.002,Queens,0.0132
-spatial_only,0.002,Staten Island,0.0187
-spatial_only,0.005,Bronx,0.0619
-spatial_only,0.005,Brooklyn,0.028
-spatial_only,0.005,Manhattan,0.044
-spatial_only,0.005,Queens,0.044
-spatial_only,0.005,Staten Island,0.0643
-spatial_only,0.01,Bronx,0.1179
-spatial_only,0.01,Brooklyn,0.071
-spatial_only,0.01,Manhattan,0.0976
-spatial_only,0.01,Queens,0.0864
-spatial_only,0.01,Staten Island,0.1067
-spatial_only,0.02,Bronx,0.2433
-spatial_only,0.02,Brooklyn,0.1312
-spatial_only,0.02,Manhattan,0.18
-spatial_only,0.02,Queens,0.1554
-spatial_only,0.02,Staten Island,0.1873
-spatial_only,0.05,Bronx,0.3528
-spatial_only,0.05,Brooklyn,0.2331
-spatial_only,0.05,Manhattan,0.2806
-spatial_only,0.05,Queens,0.2077
-spatial_only,0.05,Staten Island,0.2484
-cuisine_landuse,0.001,Bronx,0.0171
-cuisine_landuse,0.001,Brooklyn,0.0061
-cuisine_landuse,0.001,Manhattan,0.0043
-cuisine_landuse,0.001,Queens,0.0117
-cuisine_landuse,0.001,Staten Island,0.0155
-cuisine_landuse,0.002,Bronx,0.0347
-cuisine_landuse,0.002,Brooklyn,0.0176
-cuisine_landuse,0.002,Manhattan,0.014
-cuisine_landuse,0.002,Queens,0.0286
-cuisine_landuse,0.002,Staten Island,0.0391
-cuisine_landuse,0.005,Bronx,0.1033
-cuisine_landuse,0.005,Brooklyn,0.0578
-cuisine_landuse,0.005,Manhattan,0.0533
-cuisine_landuse,0.005,Queens,0.084
-cuisine_landuse,0.005,Staten Island,0.1303
-cuisine_landuse,0.01,Bronx,0.1868
-cuisine_landuse,0.01,Brooklyn,0.1248
-cuisine_landuse,0.01,Manhattan,0.1157
-cuisine_landuse,0.01,Queens,0.1423
-cuisine_landuse,0.01,Staten Island,0.1914
-cuisine_landuse,0.02,Bronx,0.315
-cuisine_landuse,0.02,Brooklyn,0.1999
-cuisine_landuse,0.02,Manhattan,0.2012
-cuisine_landuse,0.02,Queens,0.2146
-cuisine_landuse,0.02,Staten Island,0.259
-cuisine_landuse,0.05,Bronx,0.399
-cuisine_landuse,0.05,Brooklyn,0.2923
-cuisine_landuse,0.05,Manhattan,0.3009
-cuisine_landuse,0.05,Queens,0.2485
-cuisine_landuse,0.05,Staten Island,0.2956
+spatial_only,0.001,Bronx,0.008861940298507462
+spatial_only,0.001,Brooklyn,0.0021853146853146855
+spatial_only,0.001,Manhattan,0.004030107271972974
+spatial_only,0.001,Queens,0.007162934082872427
+spatial_only,0.001,Staten Island,0.005625879043600563
+borough_only,0.001,Bronx,0.008861940298507462
+borough_only,0.001,Brooklyn,0.0021853146853146855
+borough_only,0.001,Manhattan,0.004207906122207076
+borough_only,0.001,Queens,0.007162934082872427
+borough_only,0.001,Staten Island,0.005625879043600563
+cuisine_landuse,0.001,Bronx,0.016791044776119403
+cuisine_landuse,0.001,Brooklyn,0.006730769230769231
+cuisine_landuse,0.001,Manhattan,0.004326438689029811
+cuisine_landuse,0.001,Queens,0.012784477287152053
+cuisine_landuse,0.001,Staten Island,0.01617440225035162
+cuisine_units,0.001,Bronx,0.011194029850746268
+cuisine_units,0.001,Brooklyn,0.003933566433566434
+cuisine_units,0.001,Manhattan,0.0032596455876252
+cuisine_units,0.001,Queens,0.0101550457883761
+cuisine_units,0.001,Staten Island,0.009142053445850914
+cuisine_year,0.001,Bronx,0.005597014925373134
+cuisine_year,0.001,Brooklyn,0.0013986013986013986
+cuisine_year,0.001,Manhattan,0.0025484501866887927
+cuisine_year,0.001,Queens,0.005168192945869979
+cuisine_year,0.001,Staten Island,0.004922644163150493
+spatial_only,0.002,Bronx,0.018190298507462687
+spatial_only,0.002,Brooklyn,0.006293706293706294
+spatial_only,0.002,Manhattan,0.010490132163812007
+spatial_only,0.002,Queens,0.015323238734246078
+spatial_only,0.002,Staten Island,0.02531645569620253
+borough_only,0.002,Bronx,0.018190298507462687
+borough_only,0.002,Brooklyn,0.006468531468531468
+borough_only,0.002,Manhattan,0.010608664730634742
+borough_only,0.002,Queens,0.015323238734246078
+borough_only,0.002,Staten Island,0.02531645569620253
+cuisine_landuse,0.002,Bronx,0.03451492537313433
+cuisine_landuse,0.002,Brooklyn,0.016346153846153847
+cuisine_landuse,0.002,Manhattan,0.014046109168494044
+cuisine_landuse,0.002,Queens,0.031009157675219876
+cuisine_landuse,0.002,Staten Island,0.05485232067510549
+cuisine_units,0.002,Bronx,0.020988805970149255
+cuisine_units,0.002,Brooklyn,0.006818181818181818
+cuisine_units,0.002,Manhattan,0.008593611094648254
+cuisine_units,0.002,Queens,0.020672771783479916
+cuisine_units,0.002,Staten Island,0.030239099859353025
+cuisine_year,0.002,Bronx,0.014925373134328358
+cuisine_year,0.002,Brooklyn,0.005681818181818182
+cuisine_year,0.002,Manhattan,0.006934155159129971
+cuisine_year,0.002,Queens,0.012421797080424336
+cuisine_year,0.002,Staten Island,0.014064697609001406
+spatial_only,0.005,Bronx,0.06226679104477612
+spatial_only,0.005,Brooklyn,0.02998251748251748
+spatial_only,0.005,Manhattan,0.04296805547324127
+spatial_only,0.005,Queens,0.044156315169099646
+spatial_only,0.005,Staten Island,0.07524613220815753
+borough_only,0.005,Bronx,0.06226679104477612
+borough_only,0.005,Brooklyn,0.030157342657342656
+borough_only,0.005,Manhattan,0.043027321756652644
+borough_only,0.005,Queens,0.044246985220781576
+borough_only,0.005,Staten Island,0.07524613220815753
+cuisine_landuse,0.005,Bronx,0.10774253731343283
+cuisine_landuse,0.005,Brooklyn,0.06197552447552448
+cuisine_landuse,0.005,Manhattan,0.050909737450364485
+cuisine_landuse,0.005,Queens,0.0812403663070088
+cuisine_landuse,0.005,Staten Island,0.13853727144866385
+cuisine_units,0.005,Bronx,0.06599813432835822
+cuisine_units,0.005,Brooklyn,0.029632867132867134
+cuisine_units,0.005,Manhattan,0.030996266224145082
+cuisine_units,0.005,Queens,0.054946051319249255
+cuisine_units,0.005,Staten Island,0.09423347398030943
+cuisine_year,0.005,Bronx,0.05760261194029851
+cuisine_year,0.005,Brooklyn,0.025524475524475523
+cuisine_year,0.005,Manhattan,0.034907840929295324
+cuisine_year,0.005,Queens,0.03454528969081513
+cuisine_year,0.005,Staten Island,0.04430379746835443
+spatial_only,0.01,Bronx,0.13899253731343283
+spatial_only,0.01,Brooklyn,0.06984265734265735
+spatial_only,0.01,Manhattan,0.10027855153203342
+spatial_only,0.01,Queens,0.09076072173361138
+spatial_only,0.01,Staten Island,0.13361462728551335
+borough_only,0.01,Bronx,0.13899253731343283
+borough_only,0.01,Brooklyn,0.06993006993006994
+borough_only,0.01,Manhattan,0.10027855153203342
+borough_only,0.01,Queens,0.09085139178529332
+borough_only,0.01,Staten Island,0.13361462728551335
+cuisine_landuse,0.01,Bronx,0.19986007462686567
+cuisine_landuse,0.01,Brooklyn,0.12211538461538461
+cuisine_landuse,0.01,Manhattan,0.11687311088721626
+cuisine_landuse,0.01,Queens,0.14634146341463414
+cuisine_landuse,0.01,Staten Island,0.21870604781997188
+cuisine_units,0.01,Bronx,0.13992537313432835
+cuisine_units,0.01,Brooklyn,0.06442307692307692
+cuisine_units,0.01,Manhattan,0.07657203816748652
+cuisine_units,0.01,Queens,0.10182246803880678
+cuisine_units,0.01,Staten Island,0.14345991561181434
+cuisine_year,0.01,Bronx,0.13922574626865672
+cuisine_year,0.01,Brooklyn,0.06477272727272727
+cuisine_year,0.01,Manhattan,0.08623244236353939
+cuisine_year,0.01,Queens,0.08024299573850757
+cuisine_year,0.01,Staten Island,0.09282700421940929
+spatial_only,0.02,Bronx,0.23297574626865672
+spatial_only,0.02,Brooklyn,0.1347027972027972
+spatial_only,0.02,Manhattan,0.17904344218574053
+spatial_only,0.02,Queens,0.1557711487895548
+spatial_only,0.02,Staten Island,0.19198312236286919
+borough_only,0.02,Bronx,0.23297574626865672
+borough_only,0.02,Brooklyn,0.13505244755244755
+borough_only,0.02,Manhattan,0.17904344218574053
+borough_only,0.02,Queens,0.15622449904796445
+borough_only,0.02,Staten Island,0.19198312236286919
+cuisine_landuse,0.02,Bronx,0.30107276119402987
+cuisine_landuse,0.02,Brooklyn,0.20279720279720279
+cuisine_landuse,0.02,Manhattan,0.19854204942808037
+cuisine_landuse,0.02,Queens,0.21352797171094387
+cuisine_landuse,0.02,Staten Island,0.26863572433192684
+cuisine_units,0.02,Bronx,0.23414179104477612
+cuisine_units,0.02,Brooklyn,0.12421328671328671
+cuisine_units,0.02,Manhattan,0.149588099330291
+cuisine_units,0.02,Queens,0.15948862090851393
+cuisine_units,0.02,Staten Island,0.20323488045007032
+cuisine_year,0.02,Bronx,0.23227611940298507
+cuisine_year,0.02,Brooklyn,0.13374125874125875
+cuisine_year,0.02,Manhattan,0.16742725063711256
+cuisine_year,0.02,Queens,0.14325868165744854
+cuisine_year,0.02,Staten Island,0.1659634317862166
+spatial_only,0.05,Bronx,0.3498134328358209
+spatial_only,0.05,Brooklyn,0.2326923076923077
+spatial_only,0.05,Manhattan,0.2794405262845967
+spatial_only,0.05,Queens,0.21370931181430775
+spatial_only,0.05,Staten Island,0.2721518987341772
+borough_only,0.05,Bronx,0.3498134328358209
+borough_only,0.05,Brooklyn,0.2326923076923077
+borough_only,0.05,Manhattan,0.2794405262845967
+borough_only,0.05,Queens,0.21398132196935352
+borough_only,0.05,Staten Island,0.2721518987341772
+cuisine_landuse,0.05,Bronx,0.39575559701492535
+cuisine_landuse,0.05,Brooklyn,0.2891608391608392
+cuisine_landuse,0.05,Manhattan,0.2978723404255319
+cuisine_landuse,0.05,Queens,0.24916130202194214
+cuisine_landuse,0.05,Staten Island,0.3171589310829817
+cuisine_units,0.05,Bronx,0.34538246268656714
+cuisine_units,0.05,Brooklyn,0.2194055944055944
+cuisine_units,0.05,Manhattan,0.2629052332128252
+cuisine_units,0.05,Queens,0.21561338289962825
+cuisine_units,0.05,Staten Island,0.28621659634317864
+cuisine_year,0.05,Bronx,0.34794776119402987
+cuisine_year,0.05,Brooklyn,0.23234265734265735
+cuisine_year,0.05,Manhattan,0.27695134238131924
+cuisine_year,0.05,Queens,0.21098921026384984
+cuisine_year,0.05,Staten Island,0.24824191279887484
