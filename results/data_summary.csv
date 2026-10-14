@@ -1,5 +1,5 @@
 quantity,value
-run_date,2026-10-11
+run_date,2026-10-13
 train_window,2020-01-01 to 2025-01-01 (exclusive)
 test_window,2025-01-01 to 2026-10-10 (exclusive)
 pluto_lots,857347
@@ -8,5 +8,9 @@ train_restaurants,20636
 train_joined_to_pluto,36056
 test_visits,45052
 test_restaurants,25432
+test_visits_continuing,34321
 test_restaurants_2plus,12665
 test_restaurants_3plus,4380
+multi_record_restaurants_2_to_8,12650
+median_geocode_to_lot_ft,99
+census_tracts,2325
