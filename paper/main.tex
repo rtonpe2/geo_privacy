@@ -2,14 +2,15 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\usepackage{hyperref}
 \usepackage{natbib}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{float}
 \usepackage{setspace}
 \usepackage{indentfirst}
+\usepackage{hyperref}
 \doublespacing
+\hypersetup{hidelinks}
 
 \title{Realized Risk and Uneven Protection Under Geo-Indistinguishability}
 \author{Rama Tonpe \\ \texttt{rtonpe2@illinois.edu}}
@@ -77,9 +78,9 @@ Section 3.3 of Andr\'es et al.\ addresses the case where the same location gener
 
 \subsection{Threat model and data split}
 
-Inspection data was released openly through 2024 with full BBL and address information. Starting in 2025, the publisher anonymizes by adding planar Laplace noise and stripping BBL. The attacker uses historical releases (the training set covers 2020--2024, with 36,960 visits, 20,636 restaurants, of which 36,056 visits join to PLUTO by BBL; because the public dataset retains only recent inspections, over 90\% of training visits date from 2023--2024) to learn priors and attacks the anonymized release (the test set covers inspections from January 1, 2025 to October 9, 2026, 45,052 visits, 25,432 restaurants). The released test data includes noisy coordinates, an updated CAMIS number, inspection date, cuisine description, borough, critical flag, score, and grade. BBL is withheld as its inclusion would make re-identification trivial. The CAMIS is modified as using the same CAMIS as previous releases would provide a direct mapping from CAMIS to BBL (for restaurants that are part of both releases). Moving forward, CAMIS will refer to the pseudonym. Each test record's true location is taken to be the PLUTO coordinate of its lot, and noise is added to that point, so that a correct guess corresponds exactly to the true lot.
+Inspection data was released openly through 2024 with full BBL and address information. Starting in 2025, the publisher anonymizes by adding planar Laplace noise and stripping BBL. The attacker learns priors from the historical releases and attacks the anonymized release. The training set covers 2020--2024, with 36,960 visits from 20,636 restaurants, of which 36,056 visits join to PLUTO by BBL. Because the public dataset retains only recent inspections, over 90\% of training visits date from 2023--2024. The test set covers inspections from January 1, 2025 to October 9, 2026, with 45,052 visits from 25,432 restaurants.
 
-PLUTO version 26v2 is used for both training and attack. Only test records whose BBL appears in PLUTO are kept (45,052 of 46,116 geocoded test visits, or 97.7\%); likewise, 36,056 of 36,960 training visits (97.6\%) join to PLUTO. The unmatched BBLs may reflect lots that changed after the inspection or geocoding errors in the inspection data, and this study does not distinguish between the two. BBL for the test dataset is used only during evaluation to verify correctness. It is never provided to the attack algorithm.
+PLUTO version 26v2 is used for both training and attack. Only test records whose BBL appears in PLUTO are kept (45,052 of 46,116 geocoded test visits, or 97.7\%). Likewise, 36,056 of 36,960 training visits (97.6\%) join to PLUTO. The unmatched BBLs may reflect lots that changed after the inspection or geocoding errors in the inspection data, and this study does not distinguish between the two. BBL for the test dataset is used only during evaluation to verify correctness. It is never provided to the attack algorithm.
 
 \subsection{Attack methodology}
 
@@ -139,7 +140,7 @@ and (4) selects the highest-scoring candidate. If the intersection is empty, the
 
 \section{Results}
 
-This paper tests $\varepsilon$ values ranging from 0.001 to 0.05 ft$^{-1}$. Values above about 0.005 fall outside the range explored by Andr\'es et al.\ (corresponding to $\ell = \ln(2)$ to $\ln(6)$ at $r = 200$m, and $\varepsilon \approx 0.005$ ft$^{-1}$ in their mechanism comparison). Higher values are included to characterize the full privacy-utility tradeoff.
+This paper tests $\varepsilon$ values ranging from 0.001 to 0.05 ft$^{-1}$. Values above about 0.005 fall outside the range explored by Andr\'es et al. Higher values are included to characterize the full privacy-utility tradeoff.
 
 \subsection{Single-query re-identification}
 
