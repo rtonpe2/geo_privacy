@@ -153,41 +153,48 @@ def fig_tradeoff(res, out):
 
 def fig_spacing(res, out, eps=0.01):
     cells = pd.read_csv(res / 'spacing_by_borough.csv')
-    std = pd.read_csv(res / 'spacing_standardized.csv')
     c = cells[cells.epsilon == eps].copy()
     c['hits'] = c.records * c.reid_rate
     city = c.groupby(['prior', 'spacing_bin'])[['hits', 'records']].sum()
     city['rate'] = city.hits / city.records
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.2))
-    ax = axes[0]
+    fig, ax = plt.subplots(figsize=(4.2, 3.4))
     for name in ['map_only', 'building_type', 'history_any', 'history_cuisine']:
         st = PRIORS[name]
-        s = city.loc[name].reindex(SPACING)
-        ax.plot(range(len(SPACING)), s.rate * 100, color=st['color'], marker=st['marker'], label=st['label'])
+        r = city.loc[name].reindex(SPACING)
+        ax.plot(range(len(SPACING)), r.rate * 100, color=st['color'], marker=st['marker'], label=st['label'])
     ax.set_xticks(range(len(SPACING)))
     ax.set_xticklabels(SPACING)
     ax.set_xlabel('Distance from restaurant lot to nearest other lot')
     ax.set_ylabel('Re-identification rate (%)')
     ax.set_ylim(0, 100)
     ax.grid(axis='x', visible=False)
-    ax.set_title(f'All boroughs, ε = {eps:g}', loc='left')
     ax.legend(frameon=False, loc='upper left')
-    ax = axes[1]
-    s = std[(std.epsilon == eps) & (std.prior == 'map_only')].set_index('borough').reindex(BOROUGHS)
-    y = np.arange(len(BOROUGHS))[::-1]
-    for yi, (_, r) in zip(y, s.iterrows()):
-        ax.plot([r.actual * 100, r.at_citywide_spacing_mix * 100], [yi, yi], color=GRID, linewidth=2, zorder=1)
-    ax.scatter(s.actual * 100, y, color='#2a78d6', s=30, zorder=2, label='Actual')
-    ax.scatter(s.at_citywide_spacing_mix * 100, y, color='white', edgecolor='#2a78d6', s=30, zorder=3,
-               label='With citywide spacing mix')
-    ax.set_yticks(y)
-    ax.set_yticklabels(BOROUGHS)
-    ax.set_xlabel('Map-only re-identification rate (%)')
-    ax.grid(axis='y', visible=False)
-    ax.set_title(f'Borough gap, ε = {eps:g}', loc='left')
-    ax.legend(frameon=False, loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=7)
-    fig.tight_layout(w_pad=2)
+    fig.tight_layout()
     save(fig, out, 'fig_spacing')
+
+
+BOROUGH_STYLE = {
+    'Bronx':         dict(color='#2a78d6', marker='o'),
+    'Brooklyn':      dict(color='#eb6834', marker='s'),
+    'Manhattan':     dict(color='#1baf7a', marker='^'),
+    'Queens':        dict(color='#eda100', marker='D'),
+    'Staten Island': dict(color='#e87ba4', marker='v'),
+}
+
+
+def fig_borough(res, out, prior='map_only'):
+    df = pd.read_csv(res / 'borough.csv')
+    d = df[df.prior == prior]
+    fig, ax = plt.subplots(figsize=(4.2, 3.4))
+    for b in BOROUGHS:
+        s = d[d.borough == b].sort_values('epsilon')
+        ax.plot(s.epsilon, s.reid_rate * 100, label=b, **BOROUGH_STYLE[b])
+    eps_axis(ax)
+    ax.set_ylim(0, 100)
+    ax.set_ylabel('Re-identification rate (%)')
+    ax.legend(frameon=False, loc='upper left')
+    fig.tight_layout()
+    save(fig, out, 'fig_borough')
 
 
 if __name__ == '__main__':
@@ -198,4 +205,5 @@ if __name__ == '__main__':
     fig_utility(res, out)
     fig_tradeoff(res, out)
     fig_spacing(res, out)
+    fig_borough(res, out)
     print('figures written to', out)

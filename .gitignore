@@ -7,3 +7,6 @@ __pycache__/
 
 !results/
 !results/*.csv
+
+!data/
+!data/*.csv

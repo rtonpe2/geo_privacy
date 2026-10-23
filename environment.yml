@@ -1,19 +1,14 @@
 name: geo-privacy
 channels:
-  - defaults
   - conda-forge
 dependencies:
   - python=3.11
-  - geopandas
-  - shapely
-  - pyproj
-  - rtree
-  - pandas
-  - numpy
-  - scipy
-  - scikit-learn
-  - matplotlib
+  - pandas=3.1.0
+  - numpy=2.4.6
+  - scipy=1.17.1
+  - geopandas=1.2.0
+  - shapely=2.2.0
+  - pyproj=3.7.2
+  - matplotlib=3.11.2
   - jupyter
-  - statsmodels
-  - pip:
-    - requests
+  - requests
